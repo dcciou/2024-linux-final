@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+// Kahan 
+hanSum(float a, float b) {
+    static float c = 0.0f;  // 誤差補償
+    float y = b - c;        // 第一個數減之前的誤差
+    float t = a + y;        // 加上調整後的第二個數
+    c = (t - a) - y;        // 計算新的誤差
+    return t;               // 回傳當前總和
+}
+
+int main() {
+    float value;
+    printf("Enter a floating-point number: ");
+    scanf("%f", &value);
+
+    float resultByTwo = value * 2.0f;   
+    float resultByEight = value * 8.0f; 
+    float finalResult = kahanSum(resultByTwo, resultByEight); 
+
+    printf("Original value: %f\n", value);
+    printf("Multiplied by 10 using Kahan Sum: %f\n", finalResult);
+
+    return 0;
+}
