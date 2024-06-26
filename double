@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+
+// bit shift
+double multiplyByPowerOfTwo(double num, int power) {
+    uint64_t* bits = (uint64_t*)&num;
+    uint64_t exponent = (*bits >> 52) & 0x7FF;
+
+    if (exponent == 0 || exponent == 0x7FF) {
+        return num; // 處理特殊值：零，無限，NaN
+    }
+
+    int newExponent = (int)exponent + power;
+    if (newExponent >= 0x7FF) {
+        *bits = (*bits & 0x8000000000000000) | 0x7FF0000000000000; // overflow 處理
+    } else {
+        *bits = (*bits & 0x800FFFFFFFFFFFFF) | ((uint64_t)newExponent << 52); 
+    }
+
+    return num;
+}
+
+int main() {
+    float inputValue;
+    printf("Enter a floating-point number: ");
+    scanf("%f", &inputValue);
+
+    // 過程轉double
+    double value = (double)inputValue;
+    double resultByEight = multiplyByPowerOfTwo(value, 3); 
+    double resultByTwo = multiplyByPowerOfTwo(value, 1); 
+    double finalResult = resultByEight + resultByTwo; 
+
+    // 計算完轉回single
+    float outputValue = (float)finalResult;
+    printf("Original value: %f\n", inputValue);
+    printf("Multiplied by 10 using bitwise and double precision: %f\n", outputValue);
+
+    return 0;
+}
