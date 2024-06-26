@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdint.h>
+
+// bit shift
+float multiplyByPowerOfTwo(float num, int power) {
+    uint32_t* bits = (uint32_t*)&num;
+    uint32_t exponent = (*bits >> 23) & 0xFF;
+
+    if (exponent == 0 || exponent == 0xFF) {
+        return num; // 處理特殊值：零，無限， NaN
+    }
+
+    int newExponent = (int)exponent + power;
+    if (newExponent >= 0xFF) {
+        *bits = (*bits & 0x80000000) | 0x7F800000; // overflow 處理
+    } else {
+        *bits = (*bits & 0x807FFFFF) | ((uint32_t)newExponent << 23); 
+    }
+
+    return num;
+}
+
+// Pairwise Summation 
+float pairwiseSum(float *array, int left, int right) {
+    if (left == right) {
+        return array[left];
+    } else if (left + 1 == right) {
+        return array[left] + array[right];
+    } else {
+        int mid = left + (right - left) / 2;
+        return pairwiseSum(array, left, mid) + pairwiseSum(array, mid + 1, right);
+    }
+}
+
+int main() {
+    float value;
+    printf("Enter a floating-point number: ");
+    scanf("%f", &value);
+
+    float results[2];
+    results[0] = multiplyByPowerOfTwo(value, 3); 
+    results[1] = multiplyByPowerOfTwo(value, 1); 
+
+    float finalResult = pairwiseSum(results, 0, 1); // 使用 Pairwise Summation 求和
+
+    printf("Original value: %f\n", value);
+    printf("Multiplied by 10 using bitwise and pairwise summation: %f\n", finalResult);
+
+    return 0;
+}
