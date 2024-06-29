@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <time.h>
+#include <stdint.h>
+
+int main() {
+    float number = 1.234567f;
+    float result;
+    int32_t intResult;
+    const int iterations = 10000;  // run 10000 times
+    clock_t start, end;
+    double cpu_time_used;
+
+    // 將浮點數轉換為整數
+    int32_t fixedPoint = (int32_t)(number * 1024);  // 精度使用常見的1024倍
+
+    start = clock(); 
+
+    for (int i = 0; i < iterations; i++) {
+        intResult = (fixedPoint << 3) + (fixedPoint << 1); 
+    }
+
+    // 將結果轉換回浮點數
+    result = (float)intResult / 1024.0f;  // 將整數結果轉換回浮點數，除以1024恢復原來的比例
+
+    end = clock(); // 記錄結束時間
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;  // 計算消耗的CPU時間
+
+    printf("Result: %f\n", result);
+    printf("Time used: %f seconds\n", cpu_time_used);
+
+    return 0;
+}
